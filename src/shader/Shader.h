@@ -5,7 +5,6 @@
 #include <string>
 #include <unordered_map>
 
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -28,6 +27,6 @@ class Shader {
     void setMat4(const std::string& name, glm::mat4& mat);
 
     private:
-    GLint getUniformLocation(const std::string& name) const;
-    mutable std::unordered_map<std::string, GLint> uniformLocationCache;
+    int getUniformLocation(const std::string& name) const;
+    mutable std::unordered_map<std::string, int> uniformLocationCache;
 };

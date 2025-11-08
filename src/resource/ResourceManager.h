@@ -9,8 +9,8 @@ class ResourceManager {
     void Initialize();
     void Destroy();
     static Shader LoadShader(
-    const char* vertexPath   = "shaders/DefaultShader.vert",
-    const char* fragmentPath = "shaders/DefaultShader.frag");
+    const char* vertexPath   = "engine_shaders/DefaultShader.vert",
+    const char* fragmentPath = "engine_shaders/DefaultShader.frag");
 
     static Texture LoadTexture(const std::string& vertexPath);
 

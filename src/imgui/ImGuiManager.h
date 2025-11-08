@@ -1,16 +1,15 @@
 #pragma once
-#include <glad/glad.h>
-#include <glfw/glfw3.h>
 #include <memory>
 #include <vector>
 #include "ecs/System.h"
 
 class ImGuiManager : public System {
     public:
-    void Initialize(GLFWwindow* window);
+    void Initialize();
     void Destroy();
-
     void RenderUIData();
     void NewFrame();
     void Render();
+
+    static void SliderFloat(const char* label, float* value, float min, float max);
 };

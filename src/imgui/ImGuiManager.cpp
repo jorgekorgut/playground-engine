@@ -1,6 +1,8 @@
 #include "ImGuiManager.h"
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 #include <imgui.h>
 #include <string>
 #include <Engine.h>
@@ -8,13 +10,14 @@
 #include "ecs/SystemManager.h"
 
 
-void ImGuiManager::Initialize(GLFWwindow* window) {
+void ImGuiManager::Initialize() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
     ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(
+    (GLFWwindow*)Engine::GetInstance().windowManager.glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
     Signature signature;
@@ -26,6 +29,10 @@ void ImGuiManager::Destroy() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+void ImGuiManager::SliderFloat(const char* label, float* value, float min, float max) {
+    ImGui::SliderFloat(label, value, min, max);
 }
 
 void ImGuiManager::NewFrame() {

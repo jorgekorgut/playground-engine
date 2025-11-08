@@ -9,7 +9,8 @@
 class Sky {
     public:
     Sky() {
-        shader = ResourceManager::LoadShader("shaders/SkyShader.vert", "shaders/SkyShader.frag");
+        shader = ResourceManager::LoadShader(
+        "engine_shaders/SkyShader.vert", "engine_shaders/SkyShader.frag");
         sunLight.transform.position = glm::vec3(50.0f, 100.0f, 0.0f);
     }
 

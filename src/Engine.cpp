@@ -1,7 +1,13 @@
 #include "Engine.h"
+
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "input/InputManager.h"
 #include "window/WindowManager.h"
-#include <imgui.h>
 #include <imgui/UIObject.h>
 #include <imgui/ImGuiManager.h>
 #include <scene/Material.h>
@@ -19,7 +25,7 @@ void Engine::Initialize() {
     componentManager.RegisterComponent<Material>();
     componentManager.RegisterComponent<UIObject>();
 
-    imguiManager.Initialize(windowManager.window);
+    imguiManager.Initialize();
     inputManager.Initialize();
 
     renderManager.Initialize();
@@ -34,7 +40,8 @@ void Engine::StartLoop() {
         currentScript->Start();
     }
 
-    while(!glfwWindowShouldClose(windowManager.window)) {
+    GLFWwindow* window = (GLFWwindow*)windowManager.glfwWindow;
+    while(!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime          = currentFrame - lastFrame;
         lastFrame          = currentFrame;
@@ -53,7 +60,7 @@ void Engine::StartLoop() {
 
         imguiManager.Render();
 
-        glfwSwapBuffers(windowManager.window);
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 }

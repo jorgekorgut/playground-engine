@@ -1,15 +1,11 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 class WindowManager {
     public:
     WindowManager();
     void Destroy();
 
-    GLFWwindow* window = nullptr;
-
-    static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    void* glfwWindow = nullptr;
 
     int windowWidth  = 800;
     int windowHeight = 600;

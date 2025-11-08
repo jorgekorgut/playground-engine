@@ -18,6 +18,7 @@ set(GLFW_ROOT "" CACHE PATH "Path to GLFW root directory (should contain include
 if(NOT EXISTS "${GLFW_ROOT}/include/GLFW/glfw3.h")
     message(FATAL_ERROR "Could not find GLFW in '${GLFW_ROOT}'. Please set GLFW_ROOT to the correct directory.")
 endif()
+
 set(GLFW_INCLUDE_DIR "${GLFW_ROOT}/include")
 set(GLFW_LIBRARY_DIR "${GLFW_ROOT}/lib")
 link_directories(${GLFW_LIBRARY_DIR})
@@ -33,9 +34,9 @@ set(GLAD_INCLUDE_DIR "${GLAD_ROOT}/include")
 include_directories(${GLAD_INCLUDE_DIR})
 configure_file(
     ${GLAD_ROOT}/src/glad.c
-    ${CMAKE_SOURCE_DIR}/${LIBS_ROOT}
+    ${PROJECT_SOURCE_DIR}/${LIBS_ROOT}
     COPYONLY)
-list(APPEND LIBS_FILES ${CMAKE_SOURCE_DIR}/${LIBS_ROOT}/glad.c)
+list(APPEND LIBS_FILES ${PROJECT_SOURCE_DIR}/${LIBS_ROOT}/glad.c)
 # GLAD ====================================================================================================
 
 # GLM Configuration ======================================================================================
@@ -47,9 +48,9 @@ include_directories(${GLM_ROOT})
 # GLAD ====================================================================================================
 
 # IMGUI Configuration ====================================================================================
-set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/libs/imgui")
+set(IMGUI_ROOT "${PROJECT_SOURCE_DIR}/libs/imgui")
 if(NOT EXISTS "${IMGUI_ROOT}/imgui.h")
-    message(FATAL_ERROR "Could not find ImGui in '${CMAKE_SOURCE_DIR}/libs/imgui.h'. Please pull the ImGui submodule 'git pull --recurse-submodules'.")
+    message(FATAL_ERROR "Could not find ImGui in '${PROJECT_SOURCE_DIR}/libs/imgui.h'. Please pull the ImGui submodule 'git pull --recurse-submodules'.")
 endif()
 include_directories(${IMGUI_ROOT})
 file(GLOB IMGUI_FILES ${IMGUI_ROOT}/*.cpp ${IMGUI_ROOT}/*.h
@@ -71,7 +72,7 @@ set(ASSIMP_DLLS_RELEASE_PATH "${ASSIMP_ROOT}/bin/Release")
 # ASSIMP ====================================================================================================
 
 # STB_IMAGE Configuration ====================================================================================
-set(STB_ROOT "${CMAKE_SOURCE_DIR}/libs/stb")
+set(STB_ROOT "${PROJECT_SOURCE_DIR}/libs/stb")
 if(NOT EXISTS "${STB_ROOT}/stb_image.h")
     message(FATAL_ERROR "Could not find stb_image.h in '${STB_ROOT}/stb'. Please pull the stb submodule 'git pull --recurse-submodules'.")
 endif()
@@ -86,30 +87,38 @@ file(GLOB_RECURSE SHADER_FILES ${SHADER_ROOT}/**.frag ${SHADER_ROOT}/*.frag ${SH
 file(GLOB_RECURSE HEADER_FILES ${SRC_ROOT}/**.h ${SRC_ROOT}/*.h)
 file(GLOB_RECURSE SOURCE_FILES ${SRC_ROOT}/**.cpp ${SRC_ROOT}/*.cpp)
 
-include_directories(${SRC_ROOT}/engine)
+include_directories(${SRC_ROOT})
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} ${SHADER_FILES} ${LIBS_FILES} "README.md" ".clang-format")
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${SHADER_FILES} ${LIBS_FILES} "README.md" ".clang-format"
+)
 
-source_group(TREE ${CMAKE_SOURCE_DIR} FILES ${SHADER_FILES})
-source_group(TREE ${CMAKE_SOURCE_DIR} FILES ${LIBS_FILES})
-source_group(TREE ${CMAKE_SOURCE_DIR} FILES ${HEADER_FILES})
-source_group(TREE ${CMAKE_SOURCE_DIR} FILES ${SOURCE_FILES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SHADER_FILES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${LIBS_FILES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${HEADER_FILES})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIR} ${GLAD_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE "${GLFW_LIBRARY_DIR}/glfw3.lib")
+target_include_directories(${PROJECT_NAME} PRIVATE 
+${GLFW_INCLUDE_DIR}
+${GLAD_INCLUDE_DIR}
+)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC "${GLFW_LIBRARY_DIR}/glfw3.lib")
 
 # sets the Editor project as the default startup project in Visual Studio
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/$<CONFIG>/resources)
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PROJECT_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/$<CONFIG>/engine_resources)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/resources)
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PROJECT_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/engine_resources)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/$<CONFIG>/shaders)
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PROJECT_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/$<CONFIG>/engine_shaders)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders)
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PROJECT_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/engine_shaders)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -119,7 +128,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 
 # TEST=================================================================================================================
-enable_testing()
+#enable_testing()
 
-include_directories(${CMAKE_SOURCE_DIR}/tests/)
-add_subdirectory(tests)
+#include_directories(${PROJECT_SOURCE_DIR}/tests/)
+#add_subdirectory(tests)

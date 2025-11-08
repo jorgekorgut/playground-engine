@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include <glad/glad.h>
 
 Shader::Shader(int ID) : ID(ID) {
 }

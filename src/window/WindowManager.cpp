@@ -1,5 +1,11 @@
 #include "WindowManager.h"
 #include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
 
 WindowManager::WindowManager() {
     glfwInit();
@@ -11,7 +17,9 @@ WindowManager::WindowManager() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
+    GLFWwindow* window =
+    glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
+
     if(window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -28,11 +36,10 @@ WindowManager::WindowManager() {
 
     glViewport(0, 0, windowWidth, windowHeight);
     glEnable(GL_DEPTH_TEST);
+
+    glfwWindow = window;
 }
 
-void WindowManager::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
 
 void WindowManager::Destroy() {
     glfwTerminate();
