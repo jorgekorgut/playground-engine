@@ -17,8 +17,8 @@ Dependency libraries
 - IMGUI (Automatically installed)
 - STB (Automatically installed)
 
-charge all submodules
-``` git pull --recurse-submodules ```
+charge all submodules  
+``` git pull --recurse-submodules ```  
 
 ```mkdir build```  
 ```cd build```  
